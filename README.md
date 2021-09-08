@@ -1,4 +1,6 @@
-# PersonCrud
+# Prueba desarrollo mesa 3
+
+![alt text](https://github.com/hamtino/frontendBRM/blob/master/img/Capture1.PNG)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.1.
 
