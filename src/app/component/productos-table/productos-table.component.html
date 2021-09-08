@@ -1,0 +1,268 @@
+<button mat-raised-button color="primary"data-bs-toggle="modal" data-bs-target="#modelId">Ingresar Producto</button>&nbsp;&nbsp;&nbsp;
+<mat-form-field appearance="standard">
+  <mat-label>Filtro</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="ejemplo Juan" #input>
+</mat-form-field>
+
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort>
+
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+      <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="descripcion">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descripcion </th>
+      <td mat-cell *matCellDef="let row"> {{row.descripcion}} </td>
+    </ng-container>
+    
+     <!-- Name Column -->
+     <ng-container matColumnDef="cantidad">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Cantidad </th>
+      <td mat-cell *matCellDef="let row"> {{row.cantidad}} </td>
+    </ng-container>
+
+     <!-- Name Column -->
+     <ng-container matColumnDef="lote">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Lote </th>
+      <td mat-cell *matCellDef="let row"> {{row.lote}} </td>
+    </ng-container>
+
+    <!-- Progress Column -->
+    <ng-container matColumnDef="vencimiento">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha de vencimiento</th>
+      <td mat-cell *matCellDef="let row"> {{row.vencimiento | date: 'dd-MM-YYYY' :'+0000' }}</td>
+    </ng-container>
+
+     <!-- Name Column -->
+     <ng-container matColumnDef="precio">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Precio </th>
+      <td mat-cell *matCellDef="let row"> $ {{row.precio}} </td>
+    </ng-container>
+
+
+  
+
+    <!-- Fruit Column -->
+    <ng-container matColumnDef="option">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Opciones</th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-mini-fab color="primary" (click)="editProducto(row)" data-bs-toggle="modal" data-bs-target="#modaleditar">
+          <fa-icon [icon]="faEdit"></fa-icon>
+        </button>
+      </td>
+    </ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">No se encontro coincidencia "{{input.value}}"</td>
+    </tr>
+  </table>
+  
+  <mat-paginator [pageSizeOptions]="[10, 5, 25, 100]" aria-label="Sel"></mat-paginator>
+</div>
+<br>
+<button mat-raised-button color="primary"data-bs-toggle="modal" data-bs-target="#modafactura">Facturar</button>
+
+
+<!-- Modal Ingresar Producto-->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ingreso de producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form id="contactForm" [formGroup]="formProducto" (ngSubmit)="sendData()">
+          <div class="row">
+
+            <mat-form-field class="col">
+
+              <input matInput  placeholder="Descripcion" class="form-control" name="descripcion" formControlName="descripcion">
+              
+            </mat-form-field>
+            
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <mat-form-field class="col">
+
+                <input matInput type="number" placeholder="Cantidad" class="form-control" name="cantidad" formControlName="cantidad">
+                
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <mat-form-field class="col">
+
+                <input matInput type="number" placeholder="lote" class="form-control" name="lote" formControlName="lote">
+                
+              </mat-form-field>
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="col">
+              <mat-form-field appearance="fill">
+                <mat-label>fecha de vencimiento</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="vencimiento">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <mat-form-field class="col">
+
+                <input matInput type="number" placeholder="precio" class="form-control" name="precio" formControlName="precio">
+                
+              </mat-form-field>
+            </div>
+          </div>
+
+          <br>
+          <button id="btnSubmit" mat-raised-button type="submit" color="primary"
+            [disabled]="formProducto.invalid">Registrar</button>
+
+        </form>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar producto-->
+
+<div class="modal fade" id="modaleditar" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar de producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form [formGroup]="formEdit" (ngSubmit)="updateData()">
+          <div class="row">
+
+            <mat-form-field class="col">
+
+              <input matInput  placeholder="Descripcion" class="form-control" name="descripcion" formControlName="descripcion">
+              
+            </mat-form-field>
+            
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <mat-form-field class="col">
+                <input matInput type="number" placeholder="Cantidad" class="form-control" name="cantidad" formControlName="cantidad">  
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <mat-form-field class="col">
+                <input matInput type="number" placeholder="lote" class="form-control" name="lote" formControlName="lote">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <mat-form-field appearance="fill">
+                <mat-label>fecha de vencimiento</mat-label>
+                <input matInput [matDatepicker]="picker2" formControlName="vencimiento">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <mat-form-field class="col">
+                <input matInput type="number" placeholder="precio" class="form-control" name="precio" formControlName="precio">   
+              </mat-form-field>
+            </div>
+          </div>
+          <br>
+          <button id="btnSubmit" mat-raised-button type="submit" color="primary"
+            [disabled]="formEdit.invalid">Registrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal facturar-->
+
+<div class="modal fade" id="modafactura" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Facturar producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <form [formGroup]="formEdit" (ngSubmit)="updateData()">
+          <div class="row">
+
+            <mat-form-field class="col">
+
+              <input matInput  placeholder="Cliente" class="form-control" name="descripcion" formControlName="descripcion">
+              
+            </mat-form-field>
+            
+          </div>
+          <div class="row">
+              <mat-form-field class="col" appearance="fill">
+                <mat-label>Number</mat-label>
+                <input type="text"
+                       placeholder="Pick one"
+                       aria-label="Number"
+                       matInput
+                       [formControl]="myControl"
+                       [matAutocomplete]="auto"
+                       formControlName="lote">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <mat-form-field class="col">
+                <input matInput type="number" placeholder="Cantidad" class="form-control" name="cantidad" formControlName="cantidad">  
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <mat-form-field class="col">
+                <input matInput type="number" placeholder="Precio Total" class="form-control" name="lote" formControlName="lote">
+              </mat-form-field>
+            </div>
+          </div>
+          <br>
+
+          
+
+
+          <button id="btnSubmit" mat-raised-button type="submit" color="primary"
+            [disabled]="formEdit.invalid">Generar Factura</button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
